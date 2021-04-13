@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            rel="shortcut icon"
+            type="image/x-icon"
+            href="docs/images/favicon.ico"
+        />
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+            integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+            crossorigin=""
+        />
+        <!--D3.js library v.5-->
+        <script src="https://d3js.org/d3.v5.js"></script>
+        <script
+            src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""
+        ></script>
+        <!-- <script type="text/javascript" src = "worldMap.js"></script> -->
+        <script type="text/javascript" src="test.js"></script>
+
+        <style>
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+            }
+
+            h1 {
+                text-align: center;
+                color: black;
+                text-decoration: none;
+                font-weight: 400;
+                text-transform: uppercase;
+                font-family: "Source Code Pro";
+                letter-spacing: 1.5px;
+                font-size: 2.2em;
+            }
+
+            h4 {
+                text-align: center;
+                color: black;
+                text-decoration: none;
+                font-weight: 400;
+                text-transform: uppercase;
+                font-family: "Source Code Pro";
+                letter-spacing: 1.5px;
+                font-size: 1.2em;
+            }
+
+            h5 {
+                color: black;
+                text-decoration: none;
+                font-weight: 100;
+                text-transform: uppercase;
+                font-family: "Source Code Pro";
+                letter-spacing: 1.5px;
+                font-size: 1em;
+            }
+
+            footer {
+                padding: 25px;
+                text-align: center;
+                color: gray;
+                font-family: Arial;
+                font-size: 0.9em;
+            }
+
+            .paragraph {
+                color: black;
+                font-size: 16px;
+                font-family: Helvetica, sans-serif;
+                text-align: justify;
+                width: 75%;
+                margin-left: 13%;
+                letter-spacing: 0.5px;
+                word-spacing: 1px;
+                line-height: 1.5em;
+            }
+
+            #map {
+                display: block;
+                margin: auto;
+                width: 1000px;
+                height: 500px;
+            }
+
+            #box {
+                margin-top: 50px;
+                margin-bottom: 50px;
+                text-align: center;
+            }
+
+            #left {
+                float: center;
+                width: 100%;
+                height: 150px;
+                display: flex;
+                justify-content: center;
+                overflow: hidden;
+            }
+
+            #middle {
+                float: left;
+                width: 75%;
+                height: 500px;
+                /*background: #efefef;*/
+            }
+
+            #right {
+                margin-left: 60%;
+                height: 300px;
+                /*background: #bfbfbf;*/
+            }
+
+            #buttons {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+               /* flex-direction: column;*/
+            }
+
+            /* #wrapper {
+                margin-left: 5%;
+                margin-right: 5%;
+            } */
+
+            .button {
+                margin: 5px;
+                padding: 9px 11px;
+                text-align: center;
+                text-decoration: bold;
+                display: inline-block;
+                font-size: 15px;
+                background-color: #555555;
+                color: white;
+                border: 2px solid black;
+            }
+
+            .button:hover {
+                background-color: white;
+                color: black;
+            }
+
+            .info {
+                padding: 6px 8px;
+                font: 14px/16px Arial, Helvetica, sans-serif;
+                background: white;
+                background: rgba(255, 255, 255, 0.8);
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+                border-radius: 5px;
+            }
+
+            .info h4 {
+                margin: 0 0 5px;
+                color: #777;
+            }
+
+            .legend {
+                line-height: 18px;
+                color: #555;
+            }
+
+            .legend i {
+                width: 18px;
+                height: 18px;
+                float: left;
+                margin-right: 8px;
+                opacity: 0.7;
+            }
+
+            #scatterPlot {
+                display: block;
+                margin: auto;
+                width: 950px;
+                height: 550px;
+            }
+
+            circle {
+                stroke: black;
+                stroke-width: 0.7px;
+                fill: red;
+                opacity: 0.8;
+            }
+
+            .axis {
+                font-size: 11pt;
+                font-family: sans-serif;
+                color: #CD853F;
+            }
+
+            .tick {
+                fill: yellow;
+            }
+
+
+        </style>
+        <title>Choropleth Tutorial - Leaflet</title>
+    </head>
+    <body>
+        <!-- <script type="text/javascript" src="worldHappiness.js"></script> -->
+        <div class="content">
+            <div id="wrapper">
+                <h1>The World Happiness</h1>
+                <div id="box">
+                    <h4>Introduction</h4>
+                    <br />
+                    <div class="paragraph">
+                        <p>
+                            The human civilization has been evolving since it came into existence, with evolution speed growing significantly in the last century. The more science and technology advance, the faster we evolve. In humanity’s early years, our main priorities were to feed and breed just like many animal species, but nowadays we are much more sophisticated than that. Today we are an advanced race, harnessing all available Earth resources, starting to make serious infrastructure changes to protect the Earth’s environment, even making moves to visit, explore and inhabit Space and other planets. A growing part of people receive proper education, values and the freedom to travel, develop and contribute to the commonwealth and progress.
+                        </p>
+						<p>
+							With the information travelling ultra-fast and so many people having a global view and the ability to relocate, happiness has become the new measure for quality of life, around the world. As we will see in the map tool below the happiness score varies in different countries. Using our interactive scatterplot tool you can trace correlation between countries' happiness score and other factors, such as, healthy life expectancy, social support, freedom, GDP, Generosity.
+						</p>
+
+						<p>The visualized data was downloaded from <a href="http://www.kaggle.com">www.kaggle.com</a> and originates from the Gallup World Poll.</p>
+
+                    </div>
+                </div>
+
+                <div id="box">
+                    <h2>The Map of Happiness</h2>
+					<div class="paragraph">
+									<p>Actions:</p>
+									<p>Hover over a country to see the exact ladder score, in the top right tooltip.</p>
+									<p>You can zoom in and out using the mouse wheel.</p>
+									<p>You can also pan and move the map using the left mouse button.</p>
+									<p>Higher happiness scores corresponds to darker shades of the red colour and vice versa - lower scores correspond to lighter shades of red.</p>
+
+                    <div id="map"></div>
+                </div>
+
+                <div id="box">
+                    <h2>The related factors</h2>
+                    <div class="paragraph">
+					<p>Actions:</p>
+					<p>Choose and click on a factor on the left, to see how it correlates to the happiness ladder score.</p>
+					<p>Hover your mouse over a circle to see exact values for different factors in a particular country.</p>
+                    </div>
+
+                    <div id="left">
+                        <div id="buttons">
+                            <div id="button1"></div>
+                            <div id="button2"></div>
+                            <div id="button3"></div>
+                            <div id="button4"></div>
+                            <div id="button5"></div>
+                            <div id="button6"></div>
+                        </div>
+                    </div>
+
+                    <div class="paragraph" style="position:relative;">
+						<div id="scatterPlot_ttip" style="display:none;" class="leaflet-top leaflet-right"><div class="info leaflet-control"> <div id="country">Country</div></div></div>
+                        <div id="scatterPlot"></div>
+                    </div>
+                </div>
+				<p style="clear:both;">&nbsp;</p>
+            </div>
+        </div>
+        <!-- <footer>
+	Copyright &copy; 2021 CS5044 DataVisulization.
+</footer> -->
+    </body>
+    <script type="text/javascript">
+        d3.selectAll("#button1")
+            .append("button")
+            .text("GDP Per Capita")
+            .attr("class", "button")
+			.on("click", function (d) {
+				d3.selectAll("#scatterPlot svg").remove();
+				fill_scatterplot('GDP Per Capita','LoggedGDPPerCapita',0.5);
+			});
+        d3.selectAll("#button2")
+            .append("button")
+            .text("Social support")
+            .attr("class", "button")
+			.on("click", function (d) {
+				d3.selectAll("#scatterPlot svg").remove();
+				fill_scatterplot('Social support','Social support',0.05);
+			});
+        d3.selectAll("#button3")
+            .append("button")
+            .text("Healthy life expectancy")
+            .attr("class", "button")
+			.on("click", function (d) {
+				d3.selectAll("#scatterPlot svg").remove();
+				fill_scatterplot('Healthy life expectancy','Healthy life expectancy',2);
+			});
+        d3.selectAll("#button4")
+            .append("button")
+            .text("Freedom to make life choices")
+            .attr("class", "button")
+			.on("click", function (d) {
+				d3.selectAll("#scatterPlot svg").remove();
+				fill_scatterplot('Freedom to make life choices','Freedom to make life choices',0.05);
+			});
+        d3.selectAll("#button5")
+            .append("button")
+            .text("Generosity")
+            .attr("class", "button")
+			.on("click", function (d) {
+				d3.selectAll("#scatterPlot svg").remove();
+				fill_scatterplot('Generosity','Generosity',0.05);
+			});
+        d3.selectAll("#button5")
+            .append("button")
+            .text("Perceptions of corruption")
+            .attr("class", "button")
+			.on("click", function (d) {
+				d3.selectAll("#scatterPlot svg").remove();
+				fill_scatterplot('Perceptions of corruption','Perceptions of corruption',0.05);
+			});
+    </script>
+
+    <script type="text/javascript" src="scatterPlot.js"></script>
+    <script type="text/javascript" defer src="worldMap.js"></script>
+</html>
